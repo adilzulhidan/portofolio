@@ -1,0 +1,240 @@
+@import 'tailwindcss';
+
+@source '../views';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --color-ink: #0b0d0c;
+  --color-panel: #151817;
+  --color-paper: #f1f1ea;
+  --color-mute: #8d918d;
+  --color-line: #262a28;
+  --color-lime: #d8f870;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; background: var(--color-ink); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { @apply bg-ink font-sans text-paper antialiased; }
+  :focus-visible { outline: 2px solid var(--color-lime); outline-offset: 3px; }
+  ::selection { background: var(--color-lime); color: var(--color-ink); }
+}
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-[1320px] px-6 md:px-12; }
+  .label { @apply font-mono text-[11px] uppercase tracking-[0.12em] text-mute; }
+  .label-lime { @apply font-mono text-[11px] uppercase tracking-[0.12em] text-lime; }
+  .display { @apply font-normal leading-[0.96] tracking-[-0.04em]; }
+  .accent { @apply font-serif italic text-lime; }
+  .btn {
+    @apply inline-flex items-center gap-4 rounded-full px-6 py-3.5 text-sm font-medium transition duration-200 hover:-translate-y-0.5 active:translate-y-0;
+  }
+  .btn-lime { @apply bg-lime text-ink hover:bg-paper; }
+  .btn-ghost { @apply border border-paper/25 text-paper hover:border-lime hover:text-lime; }
+}
+
+.hero-portrait-scene {
+  position: relative;
+  isolation: isolate;
+  perspective: 1200px;
+}
+
+.hero-portrait-scene::before {
+  position: absolute;
+  z-index: -1;
+  inset: 7% 5%;
+  border: 1px solid rgb(216 248 112 / 35%);
+  border-radius: 48%;
+  box-shadow: 0 0 70px rgb(216 248 112 / 9%), inset 0 0 45px rgb(216 248 112 / 5%);
+  content: '';
+  transform: rotate(-14deg) translateZ(-40px);
+}
+
+.hero-portrait-frame {
+  position: relative;
+  width: min(100%, 430px);
+  aspect-ratio: 4 / 5;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid rgb(241 241 234 / 20%);
+  border-radius: 2rem;
+  background: #260b11;
+  box-shadow: 16px 18px 0 -10px rgb(216 248 112 / 35%), 0 32px 70px rgb(0 0 0 / 45%);
+  transform: rotateY(-8deg) rotateX(3deg);
+  transform-style: preserve-3d;
+  transition: transform 400ms ease, box-shadow 400ms ease;
+}
+
+.hero-portrait-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+}
+
+.hero-portrait-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgb(11 13 12 / 48%) 100%);
+  pointer-events: none;
+}
+
+.hero-float-card {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid rgb(241 241 234 / 15%);
+  border-radius: 0.9rem;
+  background: rgb(21 24 23 / 88%);
+  padding: 0.85rem 1rem;
+  box-shadow: 0 16px 38px rgb(0 0 0 / 30%);
+  backdrop-filter: blur(14px);
+}
+
+.hero-float-card--top {
+  top: 14%;
+  right: -0.5rem;
+  transform: translateZ(60px) rotateY(9deg) rotateZ(2deg);
+}
+
+.hero-float-card--bottom {
+  bottom: 12%;
+  left: -0.5rem;
+  transform: translateZ(70px) rotateY(-8deg) rotateZ(-2deg);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .hero-portrait-scene:hover .hero-portrait-frame {
+    box-shadow: 20px 22px 0 -10px rgb(216 248 112 / 42%), 0 40px 90px rgb(0 0 0 / 50%);
+    transform: rotateY(-2deg) rotateX(0deg) translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-portrait-frame {
+    transition: none;
+  }
+}
+
+.has-scroll-reveal [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 1.5rem, 0);
+  transition: opacity 650ms cubic-bezier(.2, .75, .25, 1), transform 650ms cubic-bezier(.2, .75, .25, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.has-scroll-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.portfolio-lightbox {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  padding: clamp(0.75rem, 3vw, 2rem);
+  background: transparent;
+  color: var(--color-paper);
+  opacity: 0;
+  transform: translateY(0.75rem) scale(0.99);
+  transition: opacity 220ms ease, transform 220ms ease, display 220ms allow-discrete, overlay 220ms allow-discrete;
+}
+
+.portfolio-lightbox[open] {
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .portfolio-lightbox[open] {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.99);
+  }
+
+  .portfolio-lightbox[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.portfolio-lightbox.is-closing {
+  opacity: 0;
+  transform: translateY(0.5rem) scale(0.99);
+}
+
+.portfolio-lightbox::backdrop {
+  background: rgb(3 5 4 / 78%);
+  opacity: 0;
+  backdrop-filter: blur(12px);
+  transition: opacity 220ms ease;
+}
+
+.portfolio-lightbox[open]::backdrop {
+  opacity: 1;
+}
+
+.portfolio-lightbox.is-closing::backdrop {
+  opacity: 0;
+}
+
+.portfolio-lightbox-panel {
+  display: grid;
+  gap: 1.25rem;
+  width: min(100%, 76rem);
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  border: 1px solid rgb(241 241 234 / 12%);
+  border-radius: 1.25rem;
+  background: rgb(15 18 16 / 96%);
+  padding: clamp(1rem, 2vw, 1.5rem);
+  box-shadow: 0 32px 100px rgb(0 0 0 / 55%);
+}
+
+.portfolio-lightbox-media {
+  display: grid;
+  min-height: 10rem;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(241 241 234 / 8%);
+  border-radius: 0.85rem;
+  background: #080a09;
+}
+
+.portfolio-lightbox-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgb(241 241 234 / 15%);
+  border-radius: 9999px;
+  padding: 0.65rem 0.9rem;
+  color: rgb(241 241 234 / 78%);
+  font-size: 0.75rem;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.portfolio-lightbox-close:hover {
+  border-color: rgb(216 248 112 / 50%);
+  background: rgb(216 248 112 / 8%);
+  color: var(--color-lime);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-scroll-reveal [data-reveal],
+  .portfolio-lightbox,
+  .portfolio-lightbox::backdrop,
+  .btn {
+    transition: none;
+    transform: none;
+  }
+}
