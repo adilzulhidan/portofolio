@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $p['name'] }} — {{ $p['role'] }}</title>
+    <title>Adil Zulhidan</title>
     <meta name="description" content="{{ $p['hero']['intro'] }}">
     <meta property="og:title" content="{{ $p['name'] }} — {{ $p['role'] }}">
     <meta property="og:description" content="{{ $p['hero']['intro'] }}">
